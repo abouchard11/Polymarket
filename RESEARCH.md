@@ -196,3 +196,101 @@ For a $10k–100k solo operator on US-legal rails, the evidence-ranked play:
 3. Whale flow as a filtered signal input to human/model judgment on US venues.
 4. Graduate to maker-side flow (rebates + pools) once you have book-replay telemetry —
    that's where the verified structural edge lives, and it's a knife fight.
+
+## 6. Deep-dive addendum: non-mainstream seams for a solo operator (2026-07-23, same session)
+
+Targeted adversarial research pass beyond §1–5, hunting specifically for reproducible edges
+a $10k–100k solo operator could enter (not just re-confirming the base rates above). 103
+agents, 21 primary/secondary sources, 25 claims put through 3-vote adversarial verification:
+**10 confirmed, 15 refuted, 0 left unverified.** Refuted items are listed, not memory-holed —
+"not established" and "confirmed absent" are different findings and are labeled as such.
+
+### 6a. CONFIRMED
+
+- **Fee/rebate mechanics, precisely quantified.** Live-checked against docs.polymarket.us/fees
+  during this session: PMUS taker theta 0.06 / maker theta −0.0125, effective July 1 2026 —
+  **matches this repo's `core/fees.py` exactly, no fix needed.** Newly discovered: a taker-
+  **rebate** ladder on top of the maker rebate — 10%/25%/50% back on taker fees at
+  $250k/$1M/$10M trailing-calendar-month taker volume — plus an **"Accelerated Tier
+  Placement"** clause, verbatim from the live page: *"A Participant may provide verifiable
+  proof of their trailing-30-day notional trading volume on another prediction market and be
+  assigned to the rebate tier corresponding to that volume."* Unconfirmed whether trailing
+  Polymarket-global volume would qualify in practice — open question, not a green light.
+  (VERIFIED — docs.polymarket.us/fees, live-checked 2026-07-23)
+- Polymarket global's maker rebate is a **category-specific revenue-share of taker fees**, not
+  a flat rate: Crypto 20%, Sports 15% (cut from 25% in a July 2026 update), Finance/Politics/
+  Economics/Culture/Weather/Tech/Mentions/Other 25%, Geopolitics 0%. No confirmation this
+  program extends to Polymarket US traders — different mechanic from PMUS's own theta.
+  (VERIFIED — docs.polymarket.com/market-makers/maker-rebates)
+- Global-venue bot dominance is a strong function of market **duration**: 55–62% of volume
+  bot-controlled in 5/15-min markets (casual traders 4–5%), falling to ~31% bots / 41%
+  casual+regular in 4H/daily/weekly markets. The human-competable zone is the slow end, not
+  the fast end. (VERIFIED — Dune analysis, Feb 15–Mar 15 2026 window, corroborated by 3
+  independent secondary outlets after the primary Dune URL 404'd on direct fetch)
+- **Kalshi favorite-longshot bias is pervasive AND scale-invariant.** Present in nearly every
+  category (weakest only in politics/entertainment), and — contrary to the standard "big
+  money arbs this away" prior — does NOT shrink with trade size or market volume; the highest
+  transaction-size quintile shows the *largest* bias coefficient in the dataset. Caveat: this
+  is a **pre-fee** finding — net-of-2026-fee survival is the open question, and a blanket
+  "makers earn +2.6% post-fee" claim was explicitly refuted (see 6b).
+  (VERIFIED — Bürgi, Deng & Whelan working paper, GWU/UCD/CESifo, 300k+ Kalshi transactions,
+  regression tables read directly)
+- **Kalshi single-name-market maker edge, with a mechanism.** Makers earn ~2x per contract in
+  single-name vs. broad-based markets (1.91¢ vs 0.82¢) — not from wider spreads, but because
+  retail systematically overbets YES (~61% of buys) in markets that mostly resolve NO (~32–33%
+  YES rate). The edge is being the *counterparty* to that behavioral surplus, not just betting
+  the bias directionally. (VERIFIED — Bartlett (Stanford Law) & O'Hara (Cornell), 41.6M Kalshi
+  trades / 478,167 markets, corroborated by an independent outlet reproducing the same figures)
+- **Kalshi's Fed-funds/FOMC market is explicitly NOT an under-competed niche** — Susquehanna
+  runs a named institutional MM desk there, ~100M contracts/meeting. Kills that candidate
+  outright. (VERIFIED — Federal Reserve staff working paper FEDS 2026-010 / NBER w34702)
+- Cross-market "combinatorial arbitrage" (beyond strict negRisk baskets) is an academically
+  real, formally-defined category distinct from single-market rebalancing arb — but thin:
+  ~$95k observed across only 4 of 13 examined dependent-market pairs, vs. ~$28M+ for ordinary
+  single-market rebalancing arb in the same study. Not obviously scalable.
+  (VERIFIED — AFT 2025/Dagstuhl LIPIcs, arXiv:2508.03474)
+
+### 6b. REFUTED / NOT ESTABLISHED (say so plainly, don't round up to "confirmed absent")
+
+- No surviving claim on **PMUS-vs-global spread/depth/fill-quality** comparison — still
+  requires this repo's own M1 recorder data, not literature. Open gap.
+- No reliable public dataset survived for **top-1%-wallet forensics** — the Jon Becker
+  dataset's own description and a wallet-tier-archetype clustering claim were both refuted.
+  Open empirical gap; do not build on this dataset without independent verification.
+- "Kalshi makers beat fees AND the favorite-longshot bias, +2.6% net average return" — refuted
+  (high variance, not a clean edge; do not treat maker-side as free money).
+- Effective-spread-widens-in-longshot-markets (400bps center vs 1,300–1,800bps <10¢) — refuted.
+- Cross-exchange political-market underconfidence bias, and a 4-factor calibration-variance
+  decomposition (87.3% explained) — both refuted.
+- Aggregate "$40M total realized arb profit" figure — refuted; the $28M/$95k split above
+  (single-market vs. combinatorial) is the surviving, more precise version.
+
+### 6c. Ranked 2-week sprint candidates (extends §3's Q2 options in HANDOFF.md)
+
+1. **Kalshi favorite-longshot bias, scale-invariant persistence.** Measure net-of-live-fee
+   returns by category and price bucket on real Kalshi order books. Falsifies if the edge
+   dies once actual maker/taker fees and the tighter-ψ categories (politics/entertainment)
+   are applied.
+2. **Kalshi single-name-market maker/behavioral-overbetting edge.** Passively quote (or
+   simulate fills) in single-name markets; track realized markout against the documented
+   60.9%/32.5% pattern. Falsifies if your own fills don't reproduce ~1.91¢/contract once
+   *your* adverse-selection exposure — not the published aggregate — is measured.
+3. **PMUS Accelerated Tier Placement.** Confirm whether trailing Polymarket-global volume
+   actually substitutes to unlock PMUS taker rebates at this bankroll. Falsifies if the
+   mechanism doesn't apply cross-venue in practice, or the effective threshold is unreachable
+   regardless of routing.
+
+If none of these three survive their own net-of-fee measurement: read that as confirmation
+the top-1% cohort's edge here is overwhelmingly execution/latency-based (§1–2b), not a
+discoverable public-data mispricing — and redirect toward M6 (maker module) rather than
+continued search for undiscovered statistical edges in public data.
+
+Time-sensitivity: PMUS's fee schedule and Polymarket global's rebate programs are all very
+recent (May–July 2026) and could change again before a 2-week sprint concludes — re-verify
+current terms in-app before sizing any position.
+
+Sources: https://docs.polymarket.us/fees · https://docs.polymarket.com/market-makers/maker-rebates ·
+https://dune.com/blog/polymarket-fast-markets · https://www2.gwu.edu/~forcpgm/2026-001.pdf ·
+https://www.karlwhelan.com/Papers/Kalshi.pdf ·
+https://law.stanford.edu/2026/04/21/adverse-selection-in-prediction-markets-evidence-from-kalshi/ ·
+https://www.federalreserve.gov/econres/feds/files/2026010pap.pdf · https://arxiv.org/abs/2508.03474
