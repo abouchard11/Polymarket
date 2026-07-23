@@ -3,6 +3,7 @@
 *.pem
 *.key
 config/settings.yaml
+config/pairs.yaml
 config/whales.yaml
 config/watchlist.yaml
 
