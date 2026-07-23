@@ -1,0 +1,49 @@
+# Markets `pmq record` polls for order-book snapshots (roadmap M1 — HANDOFF.md seam #2).
+# Copy to config/watchlist.yaml (gitignored) and edit — that's the file `pmq record`
+# actually reads; this .example is the only one committed.
+#
+# How to find more slugs:
+#   - `pmq markets --limit 30` lists current top-volume markets by question text.
+#   - The slug is the last path segment of a market's polymarket.com URL, e.g.
+#     polymarket.com/event/<event-slug>/<market-slug> — use the MARKET slug, not the
+#     event slug, for multi-outcome (negRisk) events.
+#   - Or hit Gamma directly and read `slug` off the JSON:
+#       curl 'https://gamma-api.polymarket.com/markets?limit=10&order=volumeNum&ascending=false'
+#   - `pmq record` resolves each slug to a market (and its CLOB token ids) via Gamma at
+#     startup — a typo'd or delisted slug is skipped with a warning, not fatal.
+#
+# Category note (HANDOFF.md Q5): politics/economics markets run for months and their
+# resolution wording is stable — good recorder candidates. Crypto serials (5m/15m/hourly)
+# are bot-saturated and churn every few minutes; avoid them here.
+
+# Seconds between polls of every watchlisted market's order book(s). Keep this well
+# under the documented CLOB /book rate limit (1,500 req/10s — docs/API_NOTES.md); a
+# handful of markets at 30s is a few requests per minute, nowhere close to the ceiling.
+cadence_seconds: 30
+
+# Flush the in-memory snapshot buffer to a new parquet file every N cycles, so a crash
+# during a multi-day/multi-week run never loses more than one flush interval. A final
+# flush also happens on clean shutdown (Ctrl-C / SIGTERM) and on `--once`.
+flush_every_cycles: 20
+
+# Where parquet snapshots land (already gitignored via data/raw/ in .gitignore).
+out_dir: data/raw
+
+# Real top-volume Polymarket global markets as of 2026-07-23 (verified live against
+# Gamma — see docs/API_NOTES.md). Spans politics/geopolitics/econ per the category note
+# above. Replace/extend freely; 10-20 markets is the HANDOFF.md M1 target.
+markets:
+  - slug: will-jesus-christ-return-before-2027
+    label: "Jesus return by 2027 (long-running, highest all-time volume)"
+
+  - slug: will-the-us-invade-iran-before-2027
+    label: "US invades Iran by 2027 (geopolitics)"
+
+  - slug: will-lebron-james-win-the-2028-us-presidential-election
+    label: "LeBron 2028 (negRisk multi-outcome event market)"
+
+  - slug: will-the-fed-increase-interest-rates-by-50-bps-after-the-july-2026-meeting
+    label: "Fed +50bps July 2026 (economics, negRisk)"
+
+  - slug: will-there-be-no-change-in-fed-interest-rates-after-the-july-2026-meeting
+    label: "Fed no change July 2026 (economics, negRisk — pairs with the row above)"

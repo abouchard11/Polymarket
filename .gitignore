@@ -4,6 +4,7 @@
 *.key
 config/settings.yaml
 config/whales.yaml
+config/watchlist.yaml
 
 # Python
 __pycache__/

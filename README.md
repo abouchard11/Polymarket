@@ -26,6 +26,8 @@ cp .env.example .env          # fill in keys as accounts come online
 pmq doctor                    # reachability check
 pmq markets                   # live Polymarket global data (public, no account)
 pmq scan-negrisk              # one arb-scan cycle (measurement only)
+cp config/watchlist.example.yaml config/watchlist.yaml   # then edit the slugs
+pmq record --once             # one order-book poll cycle -> parquet (see --help for cadence)
 ```
 
 ## What's implemented vs stubbed
@@ -41,7 +43,7 @@ pmq scan-negrisk              # one arb-scan cycle (measurement only)
 | Cross-venue arb scanner + pair registry | implemented, alert-only (leg risk by design) |
 | Polymarket US client | auth skeleton; endpoints marked TODO(verify) — needs KYC + keys |
 | Execution engine | dry_run/paper/live gating; multi-leg deliberately alert-only |
-| Book/opportunity recorder -> parquet | library working; `pmq record` CLI wiring = roadmap M1 |
+| Book/opportunity recorder -> parquet | working — `pmq record` polls config/watchlist.yaml on a cadence |
 | Backtester, maker module | not built — see CLAUDE.md roadmap M4/M6 |
 
 ## First real-world steps (accounts, not code)

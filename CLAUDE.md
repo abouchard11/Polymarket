@@ -40,6 +40,7 @@ pmq doctor                  # env + venue reachability
 pmq markets                 # live global markets via Gamma (public)
 pmq scan-negrisk            # one basket-scan cycle (measurement only)
 pmq whales                  # one whale-flow poll (needs config/whales.yaml)
+pmq record                  # order-book recorder loop (needs config/watchlist.yaml)
 ```
 
 ## Architecture
