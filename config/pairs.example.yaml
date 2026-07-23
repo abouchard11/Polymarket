@@ -1,0 +1,18 @@
+# Cross-venue pair registry — Polymarket US <-> Kalshi.
+# A pair is ONLY executable after a human has diffed both markets' resolution rules
+# and set resolution_verified: true. Wording mismatch is the #1 documented loss source
+# in cross-venue prediction-market arb (arXiv:2601.01706).
+#
+# Copy to config/pairs.yaml and maintain by hand (or with a Claude Code review step).
+
+pairs:
+  - name: "EXAMPLE — Fed cuts rates at next FOMC"
+    venue_a: polymarket_us
+    market_a: "PMUS_MARKET_ID_HERE"
+    venue_b: kalshi
+    market_b: "KALSHI_TICKER_HERE"
+    resolution_verified: false
+    resolution_date: null
+    notes: >
+      Fill after diffing: resolution source, cutoff time (venue TZ!), edge cases
+      (postponement? emergency meeting? exact threshold wording?).

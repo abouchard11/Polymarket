@@ -1,0 +1,16 @@
+# Whale wallets to track on Polymarket global (all positions/trades are public).
+# Copy to config/whales.yaml. Addresses below are placeholders — resolve current
+# top-wallet addresses from a leaderboard (e.g. polymarketanalytics.com,
+# polyscalping.org/leaderboard) and paste the 0x addresses.
+#
+# Evidence caveats (RESEARCH.md #7): top wallets actively evade copiers (iceberg entries,
+# YES+NO merge exits, secondary accounts); naive copying backtests as a coin flip.
+# Use as a SIGNAL input, never a mirror.
+#
+# Known top aliases to resolve (July 2026 leaderboard): Theo4, Fredi9999, swisstony,
+# RN1, kch123, fishalive, frostrizz — sports-speed accounts (swisstony) are latency
+# operators; their edge does NOT transfer to followers by construction.
+
+wallets:
+  - address: "0x0000000000000000000000000000000000000000"
+    alias: "REPLACE_ME"
