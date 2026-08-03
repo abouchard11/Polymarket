@@ -5,7 +5,10 @@
   pmq book TOKEN_ID     show an order book
   pmq scan-negrisk      one negRisk sum-to-one scan cycle (measurement only)
   pmq whales            one whale-flow polling cycle
-  pmq record            record books for markets in config/settings.yaml
+
+NOT YET WIRED (roadmap M1): `pmq record` — a long-running loop feeding
+pmq.data.recorder.ParquetRecorder for a configured market watchlist.
+The recorder class works; the CLI command and watchlist config do not exist yet.
 """
 
 from __future__ import annotations

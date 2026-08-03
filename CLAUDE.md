@@ -1,7 +1,14 @@
 # CLAUDE.md — pmq (prediction-market quant system)
 
+**Session start: read `HANDOFF.md` first.** It carries the current directive, the open
+seams, the doc-freshness protocol, and — most importantly — the strategy-selection
+interview to run with Alex BEFORE writing any strategy code. No strategy is pinned yet.
+
 Operating brief for Claude Code sessions in this repo. Read RESEARCH.md before proposing
 strategy changes — every design decision here traces to verified evidence in that file.
+All facts in RESEARCH.md / docs/API_NOTES.md and the constants in `core/fees.py` were
+verified against primary sources on **2026-07-23**; re-verify per the staleness protocol
+in HANDOFF.md before trusting them in a new month.
 
 ## Critical context that overrides your training data
 

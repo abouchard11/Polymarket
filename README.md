@@ -41,7 +41,7 @@ pmq scan-negrisk              # one arb-scan cycle (measurement only)
 | Cross-venue arb scanner + pair registry | implemented, alert-only (leg risk by design) |
 | Polymarket US client | auth skeleton; endpoints marked TODO(verify) — needs KYC + keys |
 | Execution engine | dry_run/paper/live gating; multi-leg deliberately alert-only |
-| Book/opportunity recorder -> parquet | working |
+| Book/opportunity recorder -> parquet | library working; `pmq record` CLI wiring = roadmap M1 |
 | Backtester, maker module | not built — see CLAUDE.md roadmap M4/M6 |
 
 ## First real-world steps (accounts, not code)
