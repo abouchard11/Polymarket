@@ -29,7 +29,7 @@ import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from pmq.config import settings
-from pmq.core.models import Market, OrderBook, Quote, Venue, WhaleSignal
+from pmq.core.models import Market, OrderBook, Quote, Side, Venue, WhaleSignal
 
 _TIMEOUT = httpx.Timeout(10.0)
 
@@ -144,7 +144,7 @@ class PolymarketGlobalData:
                         market_id=str(t.get("conditionId", "")),
                         question=t.get("title"),
                         outcome=str(t.get("outcome", "")),
-                        side=("buy" if str(t.get("side", "")).upper() == "BUY" else "sell"),
+                        side=(Side.BUY if str(t.get("side", "")).upper() == "BUY" else Side.SELL),
                         price=float(t.get("price", 0)),
                         size_usd=float(t.get("size", 0)) * float(t.get("price", 0)),
                         ts=datetime.fromtimestamp(int(t.get("timestamp", 0))),
