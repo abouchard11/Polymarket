@@ -5,16 +5,16 @@
   pmq book TOKEN_ID     show an order book
   pmq scan-negrisk      one negRisk sum-to-one scan cycle (measurement only)
   pmq whales            one whale-flow polling cycle
-
-NOT YET WIRED (roadmap M1): `pmq record` — a long-running loop feeding
-pmq.data.recorder.ParquetRecorder for a configured market watchlist.
-The recorder class works; the CLI command and watchlist config do not exist yet.
+  pmq record            long-running order-book recorder for config/watchlist.yaml
 """
 
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
+import signal
+from datetime import UTC, datetime
 
 import typer
 from rich.console import Console
@@ -167,6 +167,95 @@ def whales(min_size_usd: float = 2_000.0) -> None:
             await data.aclose()
 
     asyncio.run(_run())
+
+
+@app.command()
+def record(
+    config: str = typer.Option(
+        "config/watchlist.yaml", "--config", help="path to watchlist YAML (see .example)"
+    ),
+    once: bool = typer.Option(
+        False, "--once", help="poll every watchlisted market once, flush, then exit"
+    ),
+) -> None:
+    """Long-running order-book recorder for a configured market watchlist -> parquet.
+
+    Reads config/watchlist.yaml (roadmap M1 — see HANDOFF.md seam #2), resolves each
+    slug to a market via Gamma, then polls order books on the yaml's cadence_seconds
+    (default 30s) through the READ-ONLY polymarket_global adapter. Snapshots go through
+    ParquetRecorder; a parquet file is flushed periodically and on shutdown so a crash
+    never loses more than one flush interval. Ctrl-C / SIGTERM shuts down cleanly.
+    """
+    from pmq.data.record_loop import record_cycle, resolve_markets
+    from pmq.data.recorder import ParquetRecorder
+    from pmq.data.watchlist import WatchlistError, load_watchlist
+    from pmq.venues.polymarket_global import PolymarketGlobalData
+
+    try:
+        watchlist = load_watchlist(config)
+    except WatchlistError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(code=1) from e
+
+    async def _run() -> int:
+        data = PolymarketGlobalData()
+        recorder = ParquetRecorder(out_dir=watchlist.out_dir)
+        stop = asyncio.Event()
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            with contextlib.suppress(NotImplementedError):
+                asyncio.get_running_loop().add_signal_handler(sig, stop.set)
+
+        cycles = 0
+        total_snapshots = 0
+        try:
+            resolved = await resolve_markets(data, watchlist.entries)
+            if not resolved:
+                console.print(
+                    "[red]no watchlist markets resolved — check the slugs in "
+                    f"{config} against `pmq markets` or polymarket.com URLs[/red]"
+                )
+                return 1
+
+            n_books = sum(len(m.token_ids) for _, m in resolved)
+            console.print(
+                f"[bold]pmq record[/bold] — watching {len(resolved)} market(s), "
+                f"{n_books} order book(s) / {watchlist.cadence_seconds:.0f}s cadence "
+                f"-> {watchlist.out_dir}/"
+            )
+            for entry, market in resolved:
+                label = entry.label or entry.slug
+                console.print(f"  [dim]watching[/dim] {label} :: {market.question[:70]}")
+
+            while not stop.is_set():
+                t0 = datetime.now(UTC)
+                n = await record_cycle(data, recorder, resolved)
+                cycles += 1
+                total_snapshots += n
+                console.print(
+                    f"[dim]{t0:%H:%M:%S} cycle {cycles}: {n} book snapshot(s) "
+                    f"({total_snapshots} total this run)[/dim]"
+                )
+
+                if cycles % watchlist.flush_every_cycles == 0:
+                    book_path, _ = recorder.flush()
+                    if book_path:
+                        console.print(f"  flushed -> {book_path}")
+
+                if once:
+                    break
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(stop.wait(), timeout=watchlist.cadence_seconds)
+        finally:
+            book_path, opp_path = recorder.flush()
+            if book_path:
+                console.print(f"[bold]final flush[/bold] -> {book_path}")
+            await data.aclose()
+            console.print(f"done: {cycles} cycle(s), {total_snapshots} snapshot(s) written")
+        return 0
+
+    exit_code = asyncio.run(_run())
+    if exit_code:
+        raise typer.Exit(code=exit_code)
 
 
 if __name__ == "__main__":
