@@ -1,0 +1,32 @@
+# Secrets — never commit
+.env
+*.pem
+*.key
+config/settings.yaml
+config/whales.yaml
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Data
+data/*.parquet
+data/raw/
+*.sqlite
+*.db
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# local scratch (git-ignored)
+_to_delete/
