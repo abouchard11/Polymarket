@@ -59,3 +59,7 @@ Polymarket's global on-chain venue geo-blocks US trading; this repo uses it as d
 
 Prediction-market trading loses money for ~69% of participants (see RESEARCH.md §1); this is
 tooling, not a recommendation, and nothing here is legal or financial advice.
+
+## Rights
+
+**Proprietary — all rights reserved. No license is granted.** See [LICENSE](LICENSE).
